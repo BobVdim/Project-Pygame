@@ -79,6 +79,8 @@ def main_menu():
     exit_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 550, 252, 74, "Выйти", 'BUTTON_ON.png',
                                  'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
+    is_audio_btn_clicked = False
+
     running = True
     while running:
         screen.fill((0, 0, 0))
@@ -96,7 +98,7 @@ def main_menu():
                 running = False
 
             if event.type == pygame.USEREVENT and event.button == settings_game_btn:
-                settings_menu()
+                is_audio_btn_clicked = settings_menu(is_audio_btn_clicked)
 
             if event.type == pygame.USEREVENT and event.button == exit_game_btn:
                 running = False
@@ -113,11 +115,19 @@ def main_menu():
     pygame.quit()
 
 
-def settings_menu():
+def settings_menu(is_audio_btn_clicked):
     audio_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Звук", 'BUTTON_ON.png',
                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
     back_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 450, 252, 74, "Назад", 'BUTTON_ON.png',
                             'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
+    if is_audio_btn_clicked:
+        audio_game_btn.image = load_image('BUTTON_OFF.png')
+        audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
+                                                      (audio_game_btn.width, audio_game_btn.height))
+        audio_game_btn.hover_image = load_image('BUTTON_OFF_HOVERED.gif')
+        audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
+                                                            (audio_game_btn.width, audio_game_btn.height))
 
     running = True
     while running:
@@ -136,8 +146,26 @@ def settings_menu():
                 running = False
                 pygame.quit()
 
+            if event.type == pygame.USEREVENT and event.button == audio_game_btn:
+                if not is_audio_btn_clicked:
+                    is_audio_btn_clicked = True
+                    audio_game_btn.image = load_image('BUTTON_OFF.png')
+                    audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
+                                                                  (audio_game_btn.width, audio_game_btn.height))
+                    audio_game_btn.hover_image = load_image('BUTTON_OFF_HOVERED.gif')
+                    audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
+                                                                        (audio_game_btn.width, audio_game_btn.height))
+                else:
+                    is_audio_btn_clicked = False
+                    audio_game_btn.image = load_image('BUTTON_ON.png')
+                    audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
+                                                                  (audio_game_btn.width, audio_game_btn.height))
+                    audio_game_btn.hover_image = load_image('BUTTON_ON_HOVERED.gif')
+                    audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
+                                                                        (audio_game_btn.width, audio_game_btn.height))
+
             if event.type == pygame.USEREVENT and event.button == back_btn:
-                return
+                return is_audio_btn_clicked
 
             for btn in [audio_game_btn, back_btn]:
                 btn.processing_event(event)
