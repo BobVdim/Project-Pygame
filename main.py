@@ -2,6 +2,55 @@ import pygame
 import os
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
+FPS = 60
+
+
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y, sprite_group, scale=1, animation_speed=10):
+        super().__init__(sprite_group)
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows, scale)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+        self.animation_speed = animation_speed
+        self.animation_counter = 0
+
+    def cut_sheet(self, sheet, columns, rows, scale):
+        frame_width = sheet.get_width() // columns
+        frame_height = sheet.get_height() // rows
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (frame_width * i, frame_height * j)
+                frame = sheet.subsurface(pygame.Rect(frame_location, (frame_width, frame_height)))
+                if scale != 1:
+                    frame = pygame.transform.scale(frame, (int(frame_width * scale), int(frame_height * scale)))
+                self.frames.append(frame)
+
+    def update(self):
+        self.animation_counter += 1
+        if self.animation_counter >= self.animation_speed:
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            self.image = self.frames[self.cur_frame]
+            self.animation_counter = 0
+
+
+class Player:
+    scale = 5
+    height = 12 * scale
+    width = 5 * scale
+
+    x = SCREEN_WIDTH / 2 - width / 2
+    y = SCREEN_HEIGHT - height
+
+    maxSpeed = 5
+    maxFallSpeed = 15
+    acceleration = 0.5  # и замедление тоже
+
+    def __init__(self):
+        pass
 
 
 class CreateButton:
@@ -67,6 +116,7 @@ def load_image(name, colorkey=None):
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
 pygame.display.set_caption('Wall Jumper')
 main_background = load_image('bg_main_menu.png')
 
@@ -96,6 +146,9 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+            if event.type == pygame.USEREVENT and event.button == start_game_btn:
+                game_screen()
 
             if event.type == pygame.USEREVENT and event.button == settings_game_btn:
                 is_audio_btn_clicked = settings_menu(is_audio_btn_clicked)
@@ -173,6 +226,35 @@ def settings_menu(is_audio_btn_clicked):
         for btn in [audio_game_btn, back_btn]:
             btn.check_hover(mouse_pos)
             btn.draw_btn(screen)
+
+        pygame.display.flip()
+
+
+def game_screen():
+    left_side = (0, 0, SCREEN_HEIGHT, 'left')
+    right_side = (SCREEN_WIDTH, 0, SCREEN_HEIGHT, 'right')
+
+    walls = [left_side, right_side]
+    ground = (0, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+    platforms = [ground]
+
+    all_sprite = pygame.sprite.Group()
+
+    player = AnimatedSprite(load_image('hero_cat_run.png'), 10, 1, 50, 50, all_sprite, scale=5, animation_speed=250)
+
+    running = True
+    while running:
+        screen.fill((0, 0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+
+        all_sprite.update()
+
+        all_sprite.draw(screen)
 
         pygame.display.flip()
 
