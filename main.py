@@ -37,22 +37,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.animation_counter = 0
 
 
-class Player:
-    scale = 5
-    height = 12 * scale
-    width = 5 * scale
-
-    x = SCREEN_WIDTH / 2 - width / 2
-    y = SCREEN_HEIGHT - height
-
-    maxSpeed = 5
-    maxFallSpeed = 15
-    acceleration = 0.5  # и замедление тоже
-
-    def __init__(self):
-        pass
-
-
 class CreateButton:
     def __init__(self, x, y, width, height, text, image, hover_image=None, sound=None):
         self.x = x
@@ -122,6 +106,8 @@ main_background = load_image('bg_main_menu.png')
 
 
 def main_menu():
+    is_music_playing = True
+    play_background_music()
     start_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Новая игра", 'BUTTON_ON.png',
                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
     settings_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 450, 252, 74, "Настройки", 'BUTTON_ON.png',
@@ -151,7 +137,7 @@ def main_menu():
                 game_screen()
 
             if event.type == pygame.USEREVENT and event.button == settings_game_btn:
-                is_audio_btn_clicked = settings_menu(is_audio_btn_clicked)
+                is_audio_btn_clicked, is_music_playing = settings_menu(is_audio_btn_clicked, is_music_playing)
 
             if event.type == pygame.USEREVENT and event.button == exit_game_btn:
                 running = False
@@ -168,7 +154,7 @@ def main_menu():
     pygame.quit()
 
 
-def settings_menu(is_audio_btn_clicked):
+def settings_menu(is_audio_btn_clicked, is_music_playing):
     audio_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Звук", 'BUTTON_ON.png',
                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
     back_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 450, 252, 74, "Назад", 'BUTTON_ON.png',
@@ -208,6 +194,9 @@ def settings_menu(is_audio_btn_clicked):
                     audio_game_btn.hover_image = load_image('BUTTON_OFF_HOVERED.gif')
                     audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
                                                                         (audio_game_btn.width, audio_game_btn.height))
+                    if is_music_playing:
+                        pygame.mixer.music.stop()
+                        is_music_playing = False
                 else:
                     is_audio_btn_clicked = False
                     audio_game_btn.image = load_image('BUTTON_ON.png')
@@ -216,9 +205,12 @@ def settings_menu(is_audio_btn_clicked):
                     audio_game_btn.hover_image = load_image('BUTTON_ON_HOVERED.gif')
                     audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
                                                                         (audio_game_btn.width, audio_game_btn.height))
+                    if not is_music_playing:
+                        play_background_music()
+                        is_music_playing = True
 
             if event.type == pygame.USEREVENT and event.button == back_btn:
-                return is_audio_btn_clicked
+                return is_audio_btn_clicked, is_music_playing
 
             for btn in [audio_game_btn, back_btn]:
                 btn.processing_event(event)
@@ -230,15 +222,13 @@ def settings_menu(is_audio_btn_clicked):
         pygame.display.flip()
 
 
+def play_background_music():
+    pygame.mixer.music.load(os.path.join('data', 'background_music.mp3'))
+    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.play(loops=-1, start=0.0)
+
+
 def game_screen():
-    left_side = (0, 0, SCREEN_HEIGHT, 'left')
-    right_side = (SCREEN_WIDTH, 0, SCREEN_HEIGHT, 'right')
-
-    walls = [left_side, right_side]
-    ground = (0, SCREEN_WIDTH, SCREEN_HEIGHT)
-
-    platforms = [ground]
-
     all_sprite = pygame.sprite.Group()
 
     player = AnimatedSprite(load_image('hero_cat_run.png'), 10, 1, 50, 50, all_sprite, scale=5, animation_speed=250)
