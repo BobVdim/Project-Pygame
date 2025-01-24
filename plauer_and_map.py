@@ -1,6 +1,5 @@
 import pygame
 import os
-from pytmx.util_pygame import load_pygame
 
 WIDTH, HEIGHT = 800, 800
 WHITE = (255, 255, 255)
@@ -115,6 +114,8 @@ class Player:
         self.current_frame = 'peace1'
         self.frame_counter = 0
 
+        self.rect = pygame.Rect(self.x, self.y, self.width_player, self.height_player)
+
     def handle_events(self):
         if self.on_ground:
             self.speed_y = self.JUMP_FORCE
@@ -143,15 +144,16 @@ class Player:
         self.y += self.speed_y
 
     def check_ground_collision(self):
-        if self.y + self.height_player >= self.HEIGHT:
-            self.y = self.HEIGHT - self.height_player
+        if self.rect.bottom >= self.HEIGHT:
+            self.rect.bottom = self.HEIGHT
+            self.y = self.rect.y
             self.speed_y = 0
             self.on_ground = True
             self.speed_x = 0
 
     def check_wall_collision(self):
         self.on_wall = False
-        if self.x <= 0 or self.x + self.width_player >= self.WIDTH:
+        if self.rect.left <= 0 or self.rect.right >= self.WIDTH:
             if self.push_counter == 0:
                 self.on_wall = True
                 self.speed_y = min(self.speed_y, int(self.WALL_SLIDE_SPEED))
@@ -200,6 +202,9 @@ class Player:
         self.check_edge_wall()
         self.handle_keyboard_input()
         self.check_bounds()
+
+        self.rect.x = self.x
+        self.rect.y = self.y
 
     def update_frames(self, frames, fps_divisor):
         self.frame_counter += 1
