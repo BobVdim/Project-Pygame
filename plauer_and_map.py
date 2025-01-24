@@ -11,16 +11,33 @@ class Player:
         pygame.init()
 
         self.WIDTH, self.HEIGHT = 800, 800
-        self.FPS = 60
-        self.GRAVITY = 0.5
-        self.JUMP_FORCE = -15
-        self.WALL_SLIDE_SPEED = 0.1
-        self.WALL_PUSH_SPEED = 4
-        self.WALL_JUMP_UPWARD_FORCE = -15
-        self.FRICTION = 0.95
 
         self.width_player = 40
         self.height_player = 50
+
+        self.FPS = 60
+
+        self.GRAVITY = 0.5
+
+        self.JUMP_FORCE = -15
+        self.WALL_JUMP_UPWARD_FORCE = -15
+
+        self.WALL_SLIDE_SPEED = 0.1
+
+        self.WALL_PUSH_SPEED = 4
+
+        self.FRICTION = 0.95
+
+        self.x, self.y = self.WIDTH // 2, self.HEIGHT - 40
+
+        self.speed_x, self.speed_y = 0, 0
+
+        self.on_ground = False
+        self.on_wall = False
+
+        self.wall_push_direction = 0
+        self.push_counter = 0
+        self.wall_jump_counter = 0
 
         self.player_images = {
             'peace1': pygame.transform.scale(
@@ -96,14 +113,6 @@ class Player:
         self.current_frame = 'peace1'
         self.frame_counter = 0
 
-        self.x, self.y = self.WIDTH // 2, self.HEIGHT - 40
-        self.speed_x, self.speed_y = 0, 0
-        self.on_ground = False
-        self.on_wall = False
-        self.wall_push_direction = 0
-        self.push_counter = 0
-        self.wall_jump_counter = 0
-
     def handle_events(self):
         if self.on_ground:
             self.speed_y = self.JUMP_FORCE
@@ -127,25 +136,25 @@ class Player:
         self.update_physics()
         self.update_animation()
 
-    def update_physics(self):
+    def gravity_and_verticalmovement(self):
         self.speed_y += self.GRAVITY
         self.y += self.speed_y
 
+    def check_ground_collision(self):
         if self.y + self.height_player >= self.HEIGHT:
             self.y = self.HEIGHT - self.height_player
             self.speed_y = 0
             self.on_ground = True
             self.speed_x = 0
 
+    def check_wall_collision(self):
         self.on_wall = False
         if self.x <= 0 or self.x + self.width_player >= self.WIDTH:
             if self.push_counter == 0:
                 self.on_wall = True
-                self.speed_y = min(self.speed_y, self.WALL_SLIDE_SPEED)
+                self.speed_y = min(self.speed_y, int(self.WALL_SLIDE_SPEED))
 
-        if self.on_wall and self.push_counter == 0:
-            self.speed_y = min(self.speed_y, self.WALL_SLIDE_SPEED)
-
+    def handle_wall_push(self):
         if self.push_counter > 0:
             self.x += self.WALL_PUSH_SPEED * self.wall_push_direction
             self.push_counter += 1
@@ -153,10 +162,12 @@ class Player:
             if self.push_counter > 15:
                 self.push_counter = 0
 
+    def handle_horizontal_movement(self):
         if self.push_counter == 0 and not self.on_ground:
             self.x += self.speed_x
             self.speed_y *= 0.98
 
+    def check_edge_wall(self):
         if self.push_counter == 0:
             if self.x <= 0:
                 self.on_wall = True
@@ -165,16 +176,28 @@ class Player:
                 self.on_wall = True
                 self.wall_push_direction = -1
 
+    def handle_keyboard_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.x -= 5
         if keys[pygame.K_d]:
             self.x += 5
 
+    def check_bounds(self):
         if self.x < 0:
             self.x = 0
         if self.x + 30 > self.WIDTH:
             self.x = self.WIDTH - 30
+
+    def update_physics(self):
+        self.gravity_and_verticalmovement()
+        self.check_ground_collision()
+        self.check_wall_collision()
+        self.handle_wall_push()
+        self.handle_horizontal_movement()
+        self.check_edge_wall()
+        self.handle_keyboard_input()
+        self.check_bounds()
 
     def update_frames(self, frames, fps_divisor):
         self.frame_counter += 1
@@ -243,9 +266,9 @@ sprite_group = pygame.sprite.Group()
 
 for layer in tmx_data.layers:
     if hasattr(layer, 'tiles'):
-        for x, y, surface in layer.tiles():
-            position = x * tmx_data.tilewidth, y * tmx_data.tileheight
-            Tiles(position=position, surface=surface, groups=sprite_group)
+        for x, y, surf in layer.tiles():
+            pos = x * tmx_data.tilewidth, y * tmx_data.tileheight
+            Tiles(position=pos, surface=surf, groups=(sprite_group,))
 
 player = Player()
 
