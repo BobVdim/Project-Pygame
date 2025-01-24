@@ -7,28 +7,30 @@ WHITE = (255, 255, 255)
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, x, y, width_player=40, height_player=50, fps=60, gravity=0.5, jump_force=-15,
+                 wall_jump_upward_force=-15, wall_slide_speed=0.1, wall_push_speed=4, friction=0.95):
+
         pygame.init()
 
         self.WIDTH, self.HEIGHT = 800, 800
 
-        self.width_player = 40
-        self.height_player = 50
+        self.width_player = width_player  # 40
+        self.height_player = height_player  # 50
 
-        self.FPS = 60
+        self.FPS = fps  # 60
 
-        self.GRAVITY = 0.5
+        self.GRAVITY = gravity  # 0.5
 
-        self.JUMP_FORCE = -15
-        self.WALL_JUMP_UPWARD_FORCE = -15
+        self.JUMP_FORCE = jump_force  # -15
+        self.WALL_JUMP_UPWARD_FORCE = wall_jump_upward_force  # -15
 
-        self.WALL_SLIDE_SPEED = 0.1
+        self.WALL_SLIDE_SPEED = wall_slide_speed  # 0.1
 
-        self.WALL_PUSH_SPEED = 4
+        self.WALL_PUSH_SPEED = wall_push_speed  # 4
 
-        self.FRICTION = 0.95
+        self.FRICTION = friction  # 0.95
 
-        self.x, self.y = self.WIDTH // 2, self.HEIGHT - 40
+        self.x, self.y = x, y  # self.WIDTH // 2, self.HEIGHT - 40
 
         self.speed_x, self.speed_y = 0, 0
 
@@ -238,59 +240,3 @@ class Player:
                 side = "_pere"
             frames = [f'push1{side}', f'push2{side}', f'push3{side}', f'push4{side}']
             self.update_frames(frames, fps_divisor=8)
-
-
-# Класс для Tiles
-class Tiles(pygame.sprite.Sprite):
-    def __init__(self, position, surface, groups):
-        super().__init__(groups)
-        self.image = surface
-        self.rect = self.image.get_rect(topleft=position)
-
-
-# Инициализация
-pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("TMX Loader Example")
-clock = pygame.time.Clock()
-
-# Загрузка карты
-tmx_data = load_pygame('data/basic.tmx')
-
-WIDTH = tmx_data.width * tmx_data.tilewidth
-HEIGHT = tmx_data.height * tmx_data.tileheight
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-print(WIDTH, HEIGHT)
-
-sprite_group = pygame.sprite.Group()
-
-for layer in tmx_data.layers:
-    if hasattr(layer, 'tiles'):
-        for x, y, surf in layer.tiles():
-            pos = x * tmx_data.tilewidth, y * tmx_data.tileheight
-            Tiles(position=pos, surface=surf, groups=(sprite_group,))
-
-player = Player()
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                player.handle_events()
-
-    player.update()
-
-    screen.fill(WHITE)
-    sprite_group.draw(screen)
-
-    player_frame = player.player_images[player.current_frame]
-    screen.blit(player_frame, (player.x, player.y))
-
-    pygame.display.update()
-    clock.tick(60)
-
-pygame.quit()
