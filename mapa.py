@@ -1,5 +1,6 @@
 import pygame
 from pytmx.util_pygame import load_pygame
+from plauer_and_map import Player
 
 WIDTH, HEIGHT = 800, 800
 WHITE = (255, 255, 255)
@@ -41,14 +42,25 @@ print("Все стены:")
 for rect in wall_rects:
     print(f"Стена на позиции: {rect.topleft}, Размер: {rect.size}")
 
+player = Player()
+
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                player.handle_events()
+
+    player.update()
+
     screen.fill(WHITE)
     sprite_group.draw(screen)
+
+    player_surface = player.player_images[player.current_frame]
+    screen.blit(player_surface, (player.x, player.y))
 
     pygame.display.update()
     clock.tick(60)
