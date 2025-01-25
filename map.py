@@ -60,9 +60,10 @@ pygame.time.set_timer(pygame.USEREVENT, 2000)
 def check_game_over(player, rocks):
     for rock in rocks:
         if player.rect.colliderect(rock.rect):
-            print("Game Over")
-            pygame.quit()
-            exit()
+            if rock.rect.bottom > player.rect.top and rock.rect.bottom <= player.rect.top + 10:
+                print("Game Over")
+                pygame.quit()
+                quit()
 
 
 running = True
