@@ -71,20 +71,22 @@ def createRocks(group):
 
 player = Player(x=WIDTH // 2, y=HEIGHT - 100, width=50, height=50)
 
-pygame.time.set_timer(pygame.USEREVENT, 2000)
+pygame.time.set_timer(pygame.USEREVENT, 300)
 
 
 def check_game_over(player, rocks, health_bar):
     for rock in rocks:
         if player.rect.colliderect(rock.rect):
-            if rock.rect.bottom > player.rect.top and rock.rect.bottom <= player.rect.top + 10:
-                health_bar.reduce_health()
-                rocks.remove(rock)
-                damage_sound.play()
-                if health_bar.current_health == 0:
-                    print("Game Over")
-                    pygame.quit()
-                    quit()
+            if not player.is_invincible:
+                if rock.rect.bottom > player.rect.top and rock.rect.bottom <= player.rect.top + 10:
+                    health_bar.reduce_health()
+                    rocks.remove(rock)
+                    damage_sound.play()
+                    player.take_damage()
+                    if health_bar.current_health == 0:
+                        print("Game Over")
+                        pygame.quit()
+                        quit()
 
 
 running = True
