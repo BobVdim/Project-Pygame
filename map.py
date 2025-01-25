@@ -52,20 +52,18 @@ def createRocks(group):
     Rock(x, speed, rocks_surface[indx], group)
 
 
-player = Player(x=WIDTH//2, y=HEIGHT-100, width=50, height=50)
+player = Player(x=WIDTH // 2, y=HEIGHT - 100, width=50, height=50)
 
 pygame.time.set_timer(pygame.USEREVENT, 2000)
 
 
-def check_platform_collision(player_rect, platforms):
-    for platform in platforms:
-        if player_rect.colliderect(platform):
-            return True
-    return False
+def check_game_over(player, rocks):
+    for rock in rocks:
+        if player.rect.colliderect(rock.rect):
+            print("Game Over")
+            pygame.quit()
+            exit()
 
-
-falling_speed = 0
-on_ground = False
 
 running = True
 while running:
@@ -79,39 +77,29 @@ while running:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT]:
-        player.move(-5)
+        if player.rect.x > 130:
+            player.move(-5)
+
     elif keys[pygame.K_RIGHT]:
-        player.move(5)
+        if player.rect.x + player.rect.width < WIDTH - 130:
+            player.move(5)
 
-    player.rect.y += falling_speed
-
-    if not check_platform_collision(player.rect, platform_rects):
-        falling_speed += 1  # Если нет коллизии с платформами, увеличиваем скорость падения
-        on_ground = False  # Персонаж в воздухе
-    else:
-        falling_speed = 0  # Останавливаем падение
-        on_ground = True  # Персонаж на земле
-
-    # Обновление анимации персонажа
     player.update_animation(clock.get_time(), keys[pygame.K_LEFT] or keys[pygame.K_RIGHT])
 
-    # Отображение фона
     screen.blit(background_image, (0, 0))
 
-    # Отображение тайлов
     for layer in tmx_data.visible_layers:
         if hasattr(layer, 'tiles'):
             for x, y, surf in layer.tiles():
                 pos = x * tmx_data.tilewidth, y * tmx_data.tileheight
                 screen.blit(surf, pos)
 
-    # Отображение персонажа
     player.draw(screen)
 
-    # Отображение камней
     rocks.draw(screen)
     rocks.update(HEIGHT)
 
-    # Обновление экрана
+    check_game_over(player, rocks)
+
     pygame.display.update()
     clock.tick(FPS)
