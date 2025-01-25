@@ -5,16 +5,19 @@ from tile import Tiles
 from pytmx.util_pygame import load_pygame
 from rocks import Rock
 from player import Player
+from health_bar import HealthBar
 
 BLACK = (0, 0, 0)
 FPS = 60
+
+health_count = 3
 
 pygame.init()
 pygame.display.set_caption("Game with Background and TMX Map")
 clock = pygame.time.Clock()
 
 TEMP_WIDTH = 800
-TEMP_HEIGHT = 600
+TEMP_HEIGHT = 800
 screen = pygame.display.set_mode((TEMP_WIDTH, TEMP_HEIGHT))
 
 tmx_data = load_pygame('data/basic.tmx')
@@ -25,6 +28,20 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 background_image = pygame.image.load(os.path.join('data', 'total_bg.png'))
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+
+health_bar = HealthBar(
+    max_health=3,
+    x=WIDTH - 70,
+    y=10,
+    active_heart_image_path='data/седрце_полное.png',
+    empty_heart_image_path='data/седрце_неполное.png',
+    scale=5,
+    font_size=36,
+    text_offset=(-7, 0)
+)
+
+pygame.mixer.init()
+damage_sound = pygame.mixer.Sound(os.path.join('data', 'damage_sound.wav'))
 
 sprite_group = pygame.sprite.Group()
 platform_rects = []
@@ -57,13 +74,17 @@ player = Player(x=WIDTH // 2, y=HEIGHT - 100, width=50, height=50)
 pygame.time.set_timer(pygame.USEREVENT, 2000)
 
 
-def check_game_over(player, rocks):
+def check_game_over(player, rocks, health_bar):
     for rock in rocks:
         if player.rect.colliderect(rock.rect):
             if rock.rect.bottom > player.rect.top and rock.rect.bottom <= player.rect.top + 10:
-                print("Game Over")
-                pygame.quit()
-                quit()
+                health_bar.reduce_health()
+                rocks.remove(rock)
+                damage_sound.play()
+                if health_bar.current_health == 0:
+                    print("Game Over")
+                    pygame.quit()
+                    quit()
 
 
 running = True
@@ -100,7 +121,9 @@ while running:
     rocks.draw(screen)
     rocks.update(HEIGHT)
 
-    check_game_over(player, rocks)
+    check_game_over(player, rocks, health_bar)
+
+    health_bar.draw(screen)
 
     pygame.display.update()
     clock.tick(FPS)
