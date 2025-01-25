@@ -60,6 +60,10 @@ class Player:
         self.damage_animation_speed = 100
         self.damage_duration = 500
 
+        self.is_invincible = False
+        self.invincible_timer = 0
+        self.invincible_duration = 500
+
     def move(self, dx):
         self.x += dx
         self.rect.x = self.x
@@ -70,12 +74,20 @@ class Player:
             self.direction = "left"
 
     def take_damage(self):
-        self.is_taking_damage = True
-        self.damage_timer = pygame.time.get_ticks()
-        self.animation_frames = ['damage1', 'damage2']
-        self.current_frame = 0
+        if not self.is_invincible:
+            self.is_taking_damage = True
+            self.damage_timer = pygame.time.get_ticks()
+            self.animation_frames = ['damage1', 'damage2']
+            self.current_frame = 0
+            self.is_invincible = True
+            self.invincible_timer = pygame.time.get_ticks()
+
+    def update_invincibility(self):
+        if self.is_invincible and pygame.time.get_ticks() - self.invincible_timer >= self.invincible_duration:
+            self.is_invincible = False
 
     def update_animation(self, dt, is_walking):
+        self.update_invincibility()
         if self.is_taking_damage:
             self.animation_timer += dt
             if self.animation_timer >= self.damage_animation_speed:
