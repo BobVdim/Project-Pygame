@@ -1,71 +1,46 @@
 import pygame
-import os
+import config
 
 
 class Player:
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.width_player = width
-        self.height_player = height
-        self.rect = pygame.Rect(x, y, width, height)
+    def __init__(self):
+        self.x = config.PLAYER_INITIAL_X
+        self.y = config.PLAYER_INITIAL_Y
 
-        self.player_images_peace = {
-            'peace1': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "peace", "СТОЙКА_1.png")),
-                (self.width_player, self.height_player)),
-            'peace2': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "peace", "СТОЙКА_3.png")),
-                (self.width_player, self.height_player)),
-            'peace3': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "peace", "СТОЙКА_1.png")),
-                (self.width_player, self.height_player)),
-            'peace4': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "peace", "СТОЙКА_2.png")),
-                (self.width_player, self.height_player)),
-        }
+        self.width_player = config.PLAYER_WIDTH
+        self.height_player = config.PLAYER_HEIGHT
+        self.rect = pygame.Rect(self.x, self.y, self.width_player, self.height_player)
 
-        self.player_images_walk = {
-            'walk1': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "walk", "БЕГ_1.png")),
-                (self.width_player, self.height_player)),
-            'walk2': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "walk", "БЕГ_2.png")),
-                (self.width_player, self.height_player)),
-            'walk3': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "walk", "БЕГ_3.png")),
-                (self.width_player, self.height_player)),
-            'walk4': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "walk", "БЕГ_4.png")),
-                (self.width_player, self.height_player)),
-        }
+        self.player_images_peace = [
+            pygame.transform.scale(pygame.image.load(img), (self.width_player, self.height_player))
+            for img in config.PLAYER_ANIMATIONS["peace"]
+        ]
+        self.player_images_walk = [
+            pygame.transform.scale(pygame.image.load(img), (self.width_player, self.height_player))
+            for img in config.PLAYER_ANIMATIONS["walk"]
+        ]
+        self.player_images_damage = [
+            pygame.transform.scale(pygame.image.load(img), (self.width_player, self.height_player))
+            for img in config.PLAYER_ANIMATIONS["damage"]
+        ]
 
-        self.player_images_damage = {
-            'damage1': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "damage", "ПОЛУЧЕНИЕ_УРОНА1.png")),
-                (self.width_player, self.height_player)),
-            'damage2': pygame.transform.scale(
-                pygame.image.load(os.path.join("data", "player", "player_images", "damage", "ПОЛУЧЕНИЕ_УРОНА2.png")),
-                (self.width_player, self.height_player)),
-        }
-
-        self.animation_frames = ['peace1', 'peace2', 'peace3', 'peace4']
+        self.animation_frames = self.player_images_peace
         self.current_frame = 0
         self.animation_timer = 0
-        self.animation_speed = 300
+        self.animation_speed = config.ANIMATION_SPEEDS["peace"]
         self.direction = "right"
 
         self.is_taking_damage = False
         self.damage_timer = 0
-        self.damage_animation_speed = 100
-        self.damage_duration = 500
+        self.damage_animation_speed = config.ANIMATION_SPEEDS["damage"]
+        self.damage_duration = config.DAMAGE_DURATION
 
         self.is_invincible = False
         self.invincible_timer = 0
-        self.invincible_duration = 500
+        self.invincible_duration = config.INVINCIBILITY_DURATION
 
     def move(self, dx):
-        self.x += dx
+        self.x += dx * config.PLAYER_SPEED
         self.rect.x = self.x
 
         if dx > 0:
@@ -77,7 +52,7 @@ class Player:
         if not self.is_invincible:
             self.is_taking_damage = True
             self.damage_timer = pygame.time.get_ticks()
-            self.animation_frames = ['damage1', 'damage2']
+            self.animation_frames = self.player_images_damage
             self.current_frame = 0
             self.is_invincible = True
             self.invincible_timer = pygame.time.get_ticks()
@@ -96,7 +71,7 @@ class Player:
 
             if pygame.time.get_ticks() - self.damage_timer > self.damage_duration:
                 self.is_taking_damage = False
-                self.animation_frames = ['peace1', 'peace2', 'peace3', 'peace4']
+                self.animation_frames = self.player_images_peace
             return
 
         self.animation_timer += dt
@@ -105,19 +80,12 @@ class Player:
             self.current_frame = (self.current_frame + 1) % len(self.animation_frames)
 
         if is_walking and not self.is_taking_damage:
-            self.animation_frames = ['walk1', 'walk2', 'walk3', 'walk4']
+            self.animation_frames = self.player_images_walk
         elif not self.is_taking_damage:
-            self.animation_frames = ['peace1', 'peace2', 'peace3', 'peace4']
+            self.animation_frames = self.player_images_peace
 
     def get_current_image(self):
-        image_key = self.animation_frames[self.current_frame]
-
-        if image_key in self.player_images_walk:
-            image = self.player_images_walk[image_key]
-        elif image_key in self.player_images_damage:
-            image = self.player_images_damage[image_key]
-        else:
-            image = self.player_images_peace[image_key]
+        image = self.animation_frames[self.current_frame]
 
         if self.direction == "left":
             image = pygame.transform.flip(image, True, False)
