@@ -5,38 +5,6 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
 FPS = 60
 
 
-class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y, sprite_group, scale=1, animation_speed=10):
-        super().__init__(sprite_group)
-        self.frames = []
-        self.cut_sheet(sheet, columns, rows, scale)
-        self.cur_frame = 0
-        self.image = self.frames[self.cur_frame]
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-
-        self.animation_speed = animation_speed
-        self.animation_counter = 0
-
-    def cut_sheet(self, sheet, columns, rows, scale):
-        frame_width = sheet.get_width() // columns
-        frame_height = sheet.get_height() // rows
-        for j in range(rows):
-            for i in range(columns):
-                frame_location = (frame_width * i, frame_height * j)
-                frame = sheet.subsurface(pygame.Rect(frame_location, (frame_width, frame_height)))
-                if scale != 1:
-                    frame = pygame.transform.scale(frame, (int(frame_width * scale), int(frame_height * scale)))
-                self.frames.append(frame)
-
-    def update(self):
-        self.animation_counter += 1
-        if self.animation_counter >= self.animation_speed:
-            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.frames[self.cur_frame]
-            self.animation_counter = 0
-
-
 class CreateButton:
     def __init__(self, x, y, width, height, text, image, hover_image=None, sound=None):
         self.x = x
@@ -45,12 +13,12 @@ class CreateButton:
         self.height = height
         self.text = text
 
-        self.image = load_image(image)
+        self.image = load_image(f'buttons/{image}')
         self.image = pygame.transform.scale(self.image, (width, height))
 
         self.hover_image = self.image
         if hover_image:
-            self.hover_image = load_image(hover_image)
+            self.hover_image = load_image(f'buttons/{hover_image}')
             self.hover_image = pygame.transform.scale(self.hover_image, (width, height))
         self.is_hovered = False
 
@@ -58,7 +26,7 @@ class CreateButton:
 
         self.sound = None
         if sound:
-            self.sound = pygame.mixer.Sound(os.path.join('data', sound))
+            self.sound = pygame.mixer.Sound(os.path.join('data', 'menu', 'sounds', 'click_sounds', sound))
 
     def draw_btn(self, screen):
         if self.is_hovered:
@@ -68,7 +36,7 @@ class CreateButton:
 
         screen.blit(current_image, self.rect.topleft)
 
-        font = pygame.font.Font(os.path.join('data', 'pixel_font.ttf'), 30)
+        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 30)
         text_surface = font.render(self.text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(self.rect.centerx, self.rect.centery - 10))
         screen.blit(text_surface, text_rect)
@@ -84,7 +52,8 @@ class CreateButton:
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    base_path = os.path.join('data', 'menu', 'images')
+    fullname = os.path.join(base_path, name)
     if not os.path.isfile(fullname):
         raise FileNotFoundError(f"Файл с изображением '{fullname}' не найден")
     image = pygame.image.load(fullname)
@@ -102,7 +71,7 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Wall Jumper')
-main_background = load_image('bg_main_menu.png')
+main_background = load_image('background/bg_main_menu.png')
 
 
 def main_menu():
@@ -122,7 +91,7 @@ def main_menu():
         screen.fill((0, 0, 0))
         screen.blit(main_background, (-525, 0))
 
-        font = pygame.font.Font(os.path.join('data', 'pixel_font.ttf'), 72)
+        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
         text_surface = font.render('Wall Jumper', True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(SCREEN_WIDTH / 2, 100))
         screen.blit(text_surface, text_rect)
@@ -161,10 +130,10 @@ def settings_menu(is_audio_btn_clicked, is_music_playing):
                             'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
     if is_audio_btn_clicked:
-        audio_game_btn.image = load_image('BUTTON_OFF.png')
+        audio_game_btn.image = load_image('buttons/BUTTON_OFF.png')
         audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
                                                       (audio_game_btn.width, audio_game_btn.height))
-        audio_game_btn.hover_image = load_image('BUTTON_OFF_HOVERED.gif')
+        audio_game_btn.hover_image = load_image('buttons/BUTTON_OFF_HOVERED.gif')
         audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
                                                             (audio_game_btn.width, audio_game_btn.height))
 
@@ -173,7 +142,7 @@ def settings_menu(is_audio_btn_clicked, is_music_playing):
         screen.fill((0, 0, 0))
         screen.blit(main_background, (-525, 0))
 
-        font = pygame.font.Font(os.path.join('data', 'pixel_font.ttf'), 72)
+        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
         text_surface = font.render('Настройки', True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(SCREEN_WIDTH / 2, 100))
         screen.blit(text_surface, text_rect)
@@ -188,10 +157,10 @@ def settings_menu(is_audio_btn_clicked, is_music_playing):
             if event.type == pygame.USEREVENT and event.button == audio_game_btn:
                 if not is_audio_btn_clicked:
                     is_audio_btn_clicked = True
-                    audio_game_btn.image = load_image('BUTTON_OFF.png')
+                    audio_game_btn.image = load_image('buttons/BUTTON_OFF.png')
                     audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
                                                                   (audio_game_btn.width, audio_game_btn.height))
-                    audio_game_btn.hover_image = load_image('BUTTON_OFF_HOVERED.gif')
+                    audio_game_btn.hover_image = load_image('buttons/BUTTON_OFF_HOVERED.gif')
                     audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
                                                                         (audio_game_btn.width, audio_game_btn.height))
                     if is_music_playing:
@@ -199,10 +168,10 @@ def settings_menu(is_audio_btn_clicked, is_music_playing):
                         is_music_playing = False
                 else:
                     is_audio_btn_clicked = False
-                    audio_game_btn.image = load_image('BUTTON_ON.png')
+                    audio_game_btn.image = load_image('buttons/BUTTON_ON.png')
                     audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
                                                                   (audio_game_btn.width, audio_game_btn.height))
-                    audio_game_btn.hover_image = load_image('BUTTON_ON_HOVERED.gif')
+                    audio_game_btn.hover_image = load_image('buttons/BUTTON_ON_HOVERED.gif')
                     audio_game_btn.hover_image = pygame.transform.scale(audio_game_btn.hover_image,
                                                                         (audio_game_btn.width, audio_game_btn.height))
                     if not is_music_playing:
@@ -223,15 +192,13 @@ def settings_menu(is_audio_btn_clicked, is_music_playing):
 
 
 def play_background_music():
-    pygame.mixer.music.load(os.path.join('data', 'background_music.mp3'))
+    pygame.mixer.music.load(os.path.join('data', 'menu', 'sounds', 'background', 'background_music.mp3'))
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(loops=-1, start=0.0)
 
 
 def game_screen():
     all_sprite = pygame.sprite.Group()
-
-    player = AnimatedSprite(load_image('hero_cat_run.png'), 10, 1, 50, 50, all_sprite, scale=5, animation_speed=250)
 
     running = True
     while running:
