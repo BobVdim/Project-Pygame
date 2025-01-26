@@ -6,6 +6,8 @@ from pytmx.util_pygame import load_pygame
 from rocks import Rock
 from player import Player
 from health_bar import HealthBar
+from timer import Timer
+
 
 BLACK = (0, 0, 0)
 FPS = 60
@@ -82,8 +84,9 @@ def createRocks(group):
 
 
 player = Player()
+timer = Timer()
 
-pygame.time.set_timer(pygame.USEREVENT, 300)
+pygame.time.set_timer(pygame.USEREVENT, 200)
 
 
 def check_game_over(player, rocks, health_bar):
@@ -143,6 +146,8 @@ while running:
     check_game_over(player, rocks, health_bar)
 
     health_bar.draw(screen)
+
+    timer.draw(screen)
 
     pygame.display.update()
     clock.tick(FPS)
