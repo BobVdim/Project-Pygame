@@ -8,7 +8,6 @@ from player import Player
 from health_bar import HealthBar
 from timer import Timer
 
-
 BLACK = (0, 0, 0)
 FPS = 60
 
@@ -84,9 +83,6 @@ def createRocks(group):
 
 
 player = Player()
-timer = Timer()
-
-pygame.time.set_timer(pygame.USEREVENT, 200)
 
 
 def check_game_over(player, rocks, health_bar):
@@ -109,6 +105,8 @@ def check_game_over(player, rocks, health_bar):
                         quit()
 
 
+timer = Timer()
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -118,12 +116,13 @@ while running:
         elif event.type == pygame.USEREVENT:
             createRocks(rocks)
 
+    timer.update_spawn_interval()
+
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT]:
         if player.rect.x > 130:
             player.move(-5)
-
     elif keys[pygame.K_RIGHT]:
         if player.rect.x + player.rect.width < WIDTH - 130:
             player.move(5)
@@ -131,7 +130,6 @@ while running:
     player.update_animation(clock.get_time(), keys[pygame.K_LEFT] or keys[pygame.K_RIGHT])
 
     screen.blit(background_image, (0, 0))
-
     for layer in tmx_data.visible_layers:
         if hasattr(layer, 'tiles'):
             for x, y, surf in layer.tiles():
@@ -139,14 +137,10 @@ while running:
                 screen.blit(surf, pos)
 
     player.draw(screen)
-
     rocks.draw(screen)
     rocks.update(HEIGHT)
-
     check_game_over(player, rocks, health_bar)
-
     health_bar.draw(screen)
-
     timer.draw(screen)
 
     pygame.display.update()
