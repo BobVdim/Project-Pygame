@@ -4,11 +4,12 @@ import config
 
 class Player:
     def __init__(self):
-        self.x = config.PLAYER_INITIAL_X
-        self.y = config.PLAYER_INITIAL_Y
+        self.x = config.PLAYER_COORDS['x']
+        self.y = config.PLAYER_COORDS['y']
 
-        self.width_player = config.PLAYER_WIDTH
-        self.height_player = config.PLAYER_HEIGHT
+        self.width_player = config.PLAYER_SIZE['width']
+        self.height_player = config.PLAYER_SIZE['height']
+
         self.rect = pygame.Rect(self.x, self.y, self.width_player, self.height_player)
 
         self.player_images_peace = [
@@ -25,19 +26,19 @@ class Player:
         ]
 
         self.animation_frames = self.player_images_peace
-        self.current_frame = 0
-        self.animation_timer = 0
+        self.current_frame = config.ANIMATION_DEFAULTS["current_frame"]
+        self.animation_timer = config.ANIMATION_DEFAULTS["animation_timer"]
         self.animation_speed = config.ANIMATION_SPEEDS["peace"]
-        self.direction = "right"
+        self.direction = config.ANIMATION_DEFAULTS["direction"]
 
-        self.is_taking_damage = False
-        self.damage_timer = 0
+        self.is_taking_damage = config.DAMAGE_DEFAULTS['is_taking_damage']
+        self.damage_timer = config.DAMAGE_DEFAULTS['damage_timer']
         self.damage_animation_speed = config.ANIMATION_SPEEDS["damage"]
-        self.damage_duration = config.DAMAGE_DURATION
+        self.damage_duration = config.DAMAGE_DEFAULTS['duration']
 
-        self.is_invincible = False
-        self.invincible_timer = 0
-        self.invincible_duration = config.INVINCIBILITY_DURATION
+        self.is_invincible = config.INVINCIBILITY_DEFAULTS['is_invincible']
+        self.invincible_timer = config.INVINCIBILITY_DEFAULTS['invincible_timer']
+        self.invincible_duration = config.INVINCIBILITY_DEFAULTS['invincibility_duration']
 
     def move(self, dx):
         self.x += dx * config.PLAYER_SPEED

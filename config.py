@@ -1,10 +1,17 @@
 import os
 
-PLAYER_WIDTH = 50
-PLAYER_HEIGHT = 50
+# -----Player Config---------------------
 
-PLAYER_INITIAL_X = 800 // 2
-PLAYER_INITIAL_Y = 800 - 100
+
+PLAYER_SIZE = {
+    "width": 50,
+    "height": 50,
+}
+
+PLAYER_COORDS = {
+    'x': 800 // 2,
+    'y': 800 - 100,
+}
 
 PLAYER_SPEED = 1
 
@@ -35,5 +42,20 @@ ANIMATION_SPEEDS = {
     "walk": 300,
 }
 
-DAMAGE_DURATION = 2000
-INVINCIBILITY_DURATION = 2000
+ANIMATION_DEFAULTS = {
+    "current_frame": 0,
+    "animation_timer": 0,
+    "direction": 'right',
+}
+
+DAMAGE_DEFAULTS = {
+    'duration': 2000,
+    'is_taking_damage': False,
+    'damage_timer': 0,
+}
+
+INVINCIBILITY_DEFAULTS = {
+    'invincibility_duration': 2000,
+    'is_invincible': False,
+    'invincible_timer': 0,
+}
