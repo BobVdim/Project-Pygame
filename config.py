@@ -86,3 +86,10 @@ HEALTH_TEXT = {
 }
 
 HEALTH_SPACING = 10
+
+# -----Timer Config---------------------
+
+TIMER_SPAWN = {
+    'spawn_interval': 1000,
+    'min_spawn_interval': 100,
+}

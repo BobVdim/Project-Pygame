@@ -1,12 +1,13 @@
 import pygame
+import config
 
 
 class Timer:
     def __init__(self):
         self.start_ticks = pygame.time.get_ticks()
-        self.spawn_interval = 1000
+        self.spawn_interval = config.TIMER_SPAWN['spawn_interval']
         self.last_spawn_time = pygame.time.get_ticks()
-        self.min_spawn_interval = 100
+        self.min_spawn_interval = config.TIMER_SPAWN['min_spawn_interval']
 
         pygame.time.set_timer(pygame.USEREVENT, self.spawn_interval)
 
