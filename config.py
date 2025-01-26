@@ -59,3 +59,30 @@ INVINCIBILITY_DEFAULTS = {
     'is_invincible': False,
     'invincible_timer': 0,
 }
+
+# -----Health Config---------------------
+
+
+HEALTH_MAX_HEALTH = 3
+
+HEALTH_COORDS = {
+    'x': 800 - 70,
+    'y': 10,
+}
+
+HEALTH_IMAGES_PATH = 'data/'
+
+HEALTH_IMAGES = {
+    "active_heart": os.path.join(HEALTH_IMAGES_PATH, "седрце_полное.png"),
+    "empty_heart": os.path.join(HEALTH_IMAGES_PATH, "седрце_неполное.png"),
+}
+
+HEALTH_SCALE = 5
+
+HEALTH_TEXT = {
+    'font_size': 36,
+    'text_offset': (-7, 0),
+    'text_color': (255, 255, 255),
+}
+
+HEALTH_SPACING = 10
