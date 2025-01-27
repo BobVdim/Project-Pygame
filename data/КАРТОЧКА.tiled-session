@@ -1,0 +1,60 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "basic.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "Winter_entities (16 x 16).tsx": {
+            "scaleInDock": 1
+        },
+        "basic.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 385.33333333333326,
+                "y": 414.6666666666667
+            }
+        },
+        "mainlev_build.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "rocks.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tiles_of_block.tsx": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "C:/Users/79852/Pictures",
+    "map.height": 50,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 50,
+    "openFiles": [
+        "basic.tmx",
+        "mainlev_build.tsx",
+        "rocks.tsx"
+    ],
+    "project": "КАРТОЧКА.tiled-project",
+    "recentFiles": [
+        "rocks.tsx",
+        "mainlev_build.tsx",
+        "basic.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

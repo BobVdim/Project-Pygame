@@ -90,7 +90,7 @@ HEALTH_SPACING = 10
 # -----Timer Config---------------------
 
 TIMER_SPAWN = {
-    'spawn_interval': 1000,
+    'spawn_interval': 800,
     'min_spawn_interval': 100,
     'spawn_update_interval': 10000,
     'mid_spawn_interval': 200,
