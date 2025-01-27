@@ -1,5 +1,6 @@
 import pygame
 import os
+import config
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
 FPS = 60
@@ -70,7 +71,7 @@ def load_image(name, colorkey=None):
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-pygame.display.set_caption('Wall Jumper')
+pygame.display.set_caption('Cave Game')
 main_background = load_image('background/bg_main_menu.png')
 
 
@@ -92,7 +93,7 @@ def main_menu():
         screen.blit(main_background, (-525, 0))
 
         font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
-        text_surface = font.render('Wall Jumper', True, (255, 255, 255))
+        text_surface = font.render('Cave Game', True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(SCREEN_WIDTH / 2, 100))
         screen.blit(text_surface, text_rect)
 
@@ -197,21 +198,60 @@ def play_background_music():
     pygame.mixer.music.play(loops=-1, start=0.0)
 
 
+def launch_game():
+    import map
+    map.run_game()
+
+
 def game_screen():
-    all_sprite = pygame.sprite.Group()
+    easy_mod_btn = CreateButton(274, 300, 252, 74, "Легкий", 'BUTTON_ON.png',
+                                'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+    mid_mod_btn = CreateButton(274, 400, 252, 74, "Средний", 'BUTTON_ON.png',
+                               'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+    hard_mod_btn = CreateButton(274, 500, 252, 74, "Сложный", 'BUTTON_ON.png',
+                                'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+    back_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 650, 252, 74, "Назад", 'BUTTON_ON.png',
+                            'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
     running = True
     while running:
         screen.fill((0, 0, 0))
+        screen.blit(main_background, (-525, 0))
+
+        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
+        text_surface = font.render('Режим', True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(SCREEN_WIDTH / 2, 100))
+        screen.blit(text_surface, text_rect)
+
+        mouse_pos = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
 
-        all_sprite.update()
+            for btn in [easy_mod_btn, mid_mod_btn, hard_mod_btn, back_btn]:
+                btn.processing_event(event)
 
-        all_sprite.draw(screen)
+            if event.type == pygame.USEREVENT:
+                if event.button == easy_mod_btn:
+                    config.DIFFICULTY_MOD = 'easy'
+                    launch_game()
+                    return
+                elif event.button == mid_mod_btn:
+                    config.DIFFICULTY_MOD = 'medium'
+                    launch_game()
+                    return
+                elif event.button == hard_mod_btn:
+                    config.DIFFICULTY_MOD = 'hard'
+                    launch_game()
+                    return
+                elif event.button == back_btn:
+                    return
+
+        for btn in [easy_mod_btn, mid_mod_btn, hard_mod_btn, back_btn]:
+            btn.check_hover(mouse_pos)
+            btn.draw_btn(screen)
 
         pygame.display.flip()
 

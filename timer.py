@@ -6,7 +6,15 @@ class Timer:
     def __init__(self):
         self.start_ticks = pygame.time.get_ticks()
 
-        self.spawn_interval = config.TIMER_SPAWN['spawn_interval']
+        if config.DIFFICULTY_MOD == 'easy':
+            self.spawn_interval = 1000
+        elif config.DIFFICULTY_MOD == 'medium':
+            self.spawn_interval = 700
+        elif config.DIFFICULTY_MOD == 'hard':
+            self.spawn_interval = 400
+        else:
+            self.spawn_interval = 1000
+
         self.last_spawn_time = pygame.time.get_ticks()
 
         self.min_spawn_interval = config.TIMER_SPAWN['min_spawn_interval']
@@ -23,7 +31,7 @@ class Timer:
         return seconds
 
     def draw(self, screen):
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font('data/menu/fonts/pixel_font.ttf', 36)
         time_text = f"Time: {int(self.get_time())}s"
         text_surface = font.render(time_text, True, (255, 255, 255))
         screen.blit(text_surface, (800 // 2 - text_surface.get_width() // 2, 20))

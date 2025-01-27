@@ -90,10 +90,11 @@ HEALTH_SPACING = 10
 # -----Timer Config---------------------
 
 TIMER_SPAWN = {
-    'spawn_interval': 800,
     'min_spawn_interval': 100,
     'spawn_update_interval': 10000,
     'mid_spawn_interval': 200,
     'large_decrease_step': 100,
     'small_decrease_step': 10,
 }
+
+DIFFICULTY_MOD = None

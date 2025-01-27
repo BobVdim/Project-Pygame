@@ -107,41 +107,43 @@ def check_game_over(player, rocks, health_bar):
 
 timer = Timer()
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            pygame.quit()
-        elif event.type == pygame.USEREVENT:
-            createRocks(rocks)
 
-    timer.update_spawn_interval()
+def run_game():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+            elif event.type == pygame.USEREVENT:
+                createRocks(rocks)
 
-    keys = pygame.key.get_pressed()
+        timer.update_spawn_interval()
 
-    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-        if player.rect.x > 130:
-            player.move(-5)
-    elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-        if player.rect.x + player.rect.width < WIDTH - 130:
-            player.move(5)
+        keys = pygame.key.get_pressed()
 
-    player.update_animation(clock.get_time(), keys[pygame.K_LEFT] or keys[pygame.K_RIGHT])
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            if player.rect.x > 130:
+                player.move(-5)
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            if player.rect.x + player.rect.width < WIDTH - 130:
+                player.move(5)
 
-    screen.blit(background_image, (0, 0))
-    for layer in tmx_data.visible_layers:
-        if hasattr(layer, 'tiles'):
-            for x, y, surf in layer.tiles():
-                pos = x * tmx_data.tilewidth, y * tmx_data.tileheight
-                screen.blit(surf, pos)
+        player.update_animation(clock.get_time(), keys[pygame.K_LEFT] or keys[pygame.K_RIGHT])
 
-    player.draw(screen)
-    rocks.draw(screen)
-    rocks.update(HEIGHT)
-    check_game_over(player, rocks, health_bar)
-    health_bar.draw(screen)
-    timer.draw(screen)
+        screen.blit(background_image, (0, 0))
+        for layer in tmx_data.visible_layers:
+            if hasattr(layer, 'tiles'):
+                for x, y, surf in layer.tiles():
+                    pos = x * tmx_data.tilewidth, y * tmx_data.tileheight
+                    screen.blit(surf, pos)
 
-    pygame.display.update()
-    clock.tick(FPS)
+        player.draw(screen)
+        rocks.draw(screen)
+        rocks.update(HEIGHT)
+        check_game_over(player, rocks, health_bar)
+        health_bar.draw(screen)
+        timer.draw(screen)
+
+        pygame.display.update()
+        clock.tick(FPS)
