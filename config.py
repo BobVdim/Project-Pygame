@@ -70,7 +70,7 @@ HEALTH_COORDS = {
     'y': 10,
 }
 
-HEALTH_IMAGES_PATH = 'data/'
+HEALTH_IMAGES_PATH = 'data/player/player_images/health'
 
 HEALTH_IMAGES = {
     "active_heart": os.path.join(HEALTH_IMAGES_PATH, "седрце_полное.png"),

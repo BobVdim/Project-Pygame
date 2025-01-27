@@ -19,19 +19,19 @@ TEMP_WIDTH = 800
 TEMP_HEIGHT = 800
 screen = pygame.display.set_mode((TEMP_WIDTH, TEMP_HEIGHT))
 
-tmx_data = load_pygame('data/basic.tmx')
+tmx_data = load_pygame('data/game/map/basic.tmx')
 
 WIDTH = tmx_data.width * tmx_data.tilewidth
 HEIGHT = tmx_data.height * tmx_data.tileheight
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-background_image = pygame.image.load(os.path.join('data', 'total_bg.png'))
+background_image = pygame.image.load(os.path.join('data/', 'game/', 'images/', 'total_bg.png'))
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 
 health_bar = HealthBar()
 
 pygame.mixer.init()
-damage_sound = pygame.mixer.Sound(os.path.join('data', 'damage_sound.wav'))
+damage_sound = pygame.mixer.Sound(os.path.join('data/', 'player/', 'sounds/', 'damage_sound.wav'))
 
 sprite_group = pygame.sprite.Group()
 platform_rects = []
