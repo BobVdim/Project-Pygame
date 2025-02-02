@@ -7,6 +7,7 @@ from rocks import Rock
 from player import Player
 from health_bar import HealthBar
 from timer import Timer
+from button import CreateButton, load_image
 
 BLACK = (0, 0, 0)
 FPS = 60
@@ -107,18 +108,75 @@ def check_game_over(player, rocks, health_bar):
 
 timer = Timer()
 
+pause_button = CreateButton(0, 10, 100, 75, "Стоп", 'BUTTON_ON.png', 'BUTTON_ON_HOVERED.gif',
+                            'button_sound_click.mp3')
+is_paused = False
+
+
+def blur_surface(surface, radius=5):
+    surface = pygame.transform.gaussian_blur(surface, radius)
+    return surface
+
+
+def pause_game():
+    global is_paused
+    is_paused = True
+    timer.pause()
+
+    blurred_bg = blur_surface(screen.copy(), radius=10)
+    font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 50)
+    text_surface = font.render("Тайм-аут", True, (255, 255, 255))
+    text_rect = text_surface.get_rect(center=(WIDTH // 2, 100))
+
+    resume_button = CreateButton(WIDTH / 2 - (252 / 2), 350, 252, 74, "Вернуться", 'BUTTON_ON.png',
+                                 'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
+    while is_paused:
+        screen.blit(blurred_bg, (0, 0))
+        screen.blit(text_surface, text_rect)
+        resume_button.draw_btn(screen)
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            resume_button.processing_event(event)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if resume_button.rect.collidepoint(event.pos):
+                    is_paused = False
+                    timer.resume()
+
+        resume_button.check_hover(mouse_pos)
+        resume_button.draw_btn(screen)
+
+        pygame.display.update()
+        clock.tick(FPS)
+
 
 def run_game():
+    global is_paused
     running = True
     while running:
+        mouse_pos = pygame.mouse.get_pos()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if pause_button.rect.collidepoint(event.pos):
+                    pause_game()
+
             elif event.type == pygame.USEREVENT:
                 createRocks(rocks)
 
-        timer.update_spawn_interval()
+        if not is_paused:
+            timer.update_spawn_interval()
 
         keys = pygame.key.get_pressed()
         is_walking = False
@@ -148,6 +206,10 @@ def run_game():
         check_game_over(player, rocks, health_bar)
         health_bar.draw(screen)
         timer.draw(screen)
+
+        if not is_paused:
+            pause_button.check_hover(mouse_pos)
+            pause_button.draw_btn(screen)
 
         pygame.display.update()
         clock.tick(FPS)

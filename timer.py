@@ -5,6 +5,8 @@ import config
 class Timer:
     def __init__(self):
         self.start_ticks = pygame.time.get_ticks()
+        self.pause_ticks = 0
+        self.is_paused = False
 
         if config.DIFFICULTY_MOD == 'easy':
             self.spawn_interval = 1000
@@ -27,8 +29,10 @@ class Timer:
         pygame.time.set_timer(pygame.USEREVENT, self.spawn_interval)
 
     def get_time(self):
-        seconds = (pygame.time.get_ticks() - self.start_ticks) / 1000
-        return seconds
+        if self.is_paused:
+            return (self.pause_ticks - self.start_ticks) / 1000
+        else:
+            return (pygame.time.get_ticks() - self.start_ticks) / 1000
 
     def draw(self, screen):
         font = pygame.font.Font('data/menu/fonts/pixel_font.ttf', 36)
@@ -37,15 +41,24 @@ class Timer:
         screen.blit(text_surface, (800 // 2 - text_surface.get_width() // 2, 20))
 
     def update_spawn_interval(self):
+        if self.is_paused:
+            return
+
         current_time = pygame.time.get_ticks()
         if current_time - self.last_spawn_time >= self.spawn_update_interval:
             if self.spawn_interval > self.mid_spawn_interval:
                 self.spawn_interval -= self.large_decrease_step
-                print(self.spawn_interval)
             elif self.spawn_interval > self.min_spawn_interval:
                 self.spawn_interval -= self.small_decrease_step
-                print(self.spawn_interval)
             self.spawn_interval = max(self.spawn_interval, self.min_spawn_interval)
 
             pygame.time.set_timer(pygame.USEREVENT, self.spawn_interval)
             self.last_spawn_time = current_time
+
+    def pause(self):
+        self.is_paused = True
+        self.pause_ticks = pygame.time.get_ticks()
+
+    def resume(self):
+        self.is_paused = False
+        self.start_ticks += pygame.time.get_ticks() - self.pause_ticks
