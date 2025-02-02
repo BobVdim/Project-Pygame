@@ -75,6 +75,36 @@ pygame.display.set_caption('Cave Game')
 main_background = load_image('background/bg_main_menu.png')
 
 
+def show_intro_screen():
+    intro_font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
+
+    running = True
+    start_ticks = pygame.time.get_ticks()
+    color_change_time = start_ticks
+    current_color = (255, 255, 255)
+
+    while running:
+        screen.fill((0, 0, 0))
+
+        if pygame.time.get_ticks() - color_change_time >= 1000:
+            current_color = (255, 255, 0) if current_color == (255, 255, 255) else (255, 255, 255)
+            color_change_time = pygame.time.get_ticks()
+
+        text_surface = intro_font.render('Cave Game', True, current_color)
+        text_rect = text_surface.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+
+        if pygame.time.get_ticks() - start_ticks >= 1500:
+            running = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                exit()
+
+
 def main_menu():
     is_music_playing = True
     play_background_music()
@@ -236,14 +266,17 @@ def game_screen():
             if event.type == pygame.USEREVENT:
                 if event.button == easy_mod_btn:
                     config.DIFFICULTY_MOD = 'easy'
+                    show_intro_screen()
                     launch_game()
                     return
                 elif event.button == mid_mod_btn:
                     config.DIFFICULTY_MOD = 'medium'
+                    show_intro_screen()
                     launch_game()
                     return
                 elif event.button == hard_mod_btn:
                     config.DIFFICULTY_MOD = 'hard'
+                    show_intro_screen()
                     launch_game()
                     return
                 elif event.button == back_btn:

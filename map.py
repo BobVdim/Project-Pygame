@@ -121,15 +121,19 @@ def run_game():
         timer.update_spawn_interval()
 
         keys = pygame.key.get_pressed()
+        is_walking = False
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             if player.rect.x > 130:
                 player.move(-5)
-        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+                is_walking = True
+
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             if player.rect.x + player.rect.width < WIDTH - 130:
                 player.move(5)
+                is_walking = True
 
-        player.update_animation(clock.get_time(), keys[pygame.K_LEFT] or keys[pygame.K_RIGHT])
+        player.update_animation(clock.get_time(), is_walking)
 
         screen.blit(background_image, (0, 0))
         for layer in tmx_data.visible_layers:
