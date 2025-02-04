@@ -90,7 +90,7 @@ class Game:
         self._timer.pause()
 
         blurred_bg = blur_surface(screen.copy(), radius=10)
-        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 50)
+        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
         text_surface = font.render("Тайм-аут", True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, 100))
 
