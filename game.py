@@ -94,13 +94,13 @@ class Game:
         text_surface = font.render("Тайм-аут", True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, 100))
 
-        resume_button = CreateButton(WIDTH / 2 - (252 / 2), 350, 252, 74, "Вернуться", 'BUTTON_ON.png',
+        resume_button = CreateButton(WIDTH / 2 - (252 / 2), 550, 252, 74, "Вернуться", 'BUTTON_ON.png',
                                      'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
         settings_button = CreateButton(WIDTH / 2 - (252 / 2), 450, 252, 74, "Настройки", 'BUTTON_ON.png',
                                        'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
-        menu_button = CreateButton(WIDTH / 2 - (252 / 2), 550, 252, 74, "Выйти в меню", 'BUTTON_ON.png',
+        menu_button = CreateButton(WIDTH / 2 - (252 / 2), 350, 252, 74, "Выйти в меню", 'BUTTON_ON.png',
                                    'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
         while is_paused:
