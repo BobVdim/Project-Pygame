@@ -12,7 +12,7 @@ def settings_menu(bg, sdvig):
 
     audio_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Звук",
                                   'BUTTON_ON.png', 'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
-    back_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 450, 252, 74, "Назад",
+    back_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 650, 252, 74, "Назад",
                             'BUTTON_ON.png', 'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
     if is_audio_btn_clicked:

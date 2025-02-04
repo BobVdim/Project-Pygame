@@ -2,10 +2,11 @@ import pygame
 import os
 import config
 from button import CreateButton
-from menus.common import screen, main_background, SCREEN_WIDTH, SCREEN_HEIGHT
+from menus.common import screen, SCREEN_WIDTH, SCREEN_HEIGHT
 from menus.settings_menu import settings_menu
 from sounds.background import play_background_music
 from menus.common import main_background
+from menus.score_menu import score_menu
 
 FPS = 60
 
@@ -46,11 +47,13 @@ def show_intro_screen():
 
 def main_menu(game):
     play_background_music()
-    start_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Новая игра", 'BUTTON_ON.png',
+    start_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 300, 252, 74, "Новая игра", 'BUTTON_ON.png',
                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
-    settings_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 450, 252, 74, "Настройки", 'BUTTON_ON.png',
+    settings_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 400, 252, 74, "Настройки", 'BUTTON_ON.png',
                                      'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
-    exit_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 550, 252, 74, "Выйти", 'BUTTON_ON.png',
+    best_score_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 500, 252, 74, "Статистика", 'BUTTON_ON.png',
+                                  'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+    exit_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 650, 252, 74, "Выйти", 'BUTTON_ON.png',
                                  'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
     running = True
@@ -75,13 +78,16 @@ def main_menu(game):
             if event.type == pygame.USEREVENT and hasattr(event, 'button') and event.button == settings_game_btn:
                 settings_menu(main_background, -525)
 
+            if event.type == pygame.USEREVENT and hasattr(event, 'button') and event.button == best_score_btn:
+                score_menu(main_background, -525)
+
             if event.type == pygame.USEREVENT and hasattr(event, 'button') and event.button == exit_game_btn:
                 running = False
 
-            for btn in [start_game_btn, settings_game_btn, exit_game_btn]:
+            for btn in [start_game_btn, settings_game_btn, exit_game_btn, best_score_btn]:
                 btn.processing_event(event)
 
-        for btn in [start_game_btn, settings_game_btn, exit_game_btn]:
+        for btn in [start_game_btn, settings_game_btn, exit_game_btn, best_score_btn]:
             btn.check_hover(mouse_pos)
             btn.draw_btn(screen)
 

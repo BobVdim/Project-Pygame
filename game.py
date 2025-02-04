@@ -1,5 +1,6 @@
 import pygame
 import random
+import csv
 
 from rocks import Rock
 from player import Player
@@ -211,10 +212,28 @@ class Game:
                         self._rocks.remove(rock)
                         damage_sound.play()
                         self._player.take_damage()
+
                         if self._health_bar.current_health == 0:
+                            best_time = self._timer.get_time()
+                            self.save_best_time(best_time)
                             print("Game Over")
                             pygame.quit()
                             quit()
+
+    def save_best_time(self, new_time):
+        filename = "score.csv"
+        best_time = new_time
+
+        if os.path.exists(filename):
+            with open(filename, "r", newline="") as file:
+                reader = csv.reader(file)
+                times = list(reader)
+                if times:
+                    best_time = max(best_time, float(times[0][0]))
+
+        with open(filename, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([best_time])
 
     def createRocks(self, group):
         is_big_rock = random.random() < 0.1
