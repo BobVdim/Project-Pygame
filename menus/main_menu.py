@@ -5,6 +5,7 @@ from button import CreateButton
 from menus.common import screen, main_background, SCREEN_WIDTH, SCREEN_HEIGHT
 from menus.settings_menu import settings_menu
 from sounds.background import play_background_music
+from menus.common import main_background
 
 FPS = 60
 
@@ -44,7 +45,6 @@ def show_intro_screen():
 
 
 def main_menu(game):
-    is_music_playing = True
     play_background_music()
     start_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Новая игра", 'BUTTON_ON.png',
                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
@@ -52,8 +52,6 @@ def main_menu(game):
                                      'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
     exit_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 550, 252, 74, "Выйти", 'BUTTON_ON.png',
                                  'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
-
-    is_audio_btn_clicked = False
 
     running = True
     while running:
@@ -75,7 +73,7 @@ def main_menu(game):
                 game_screen(game)
 
             if event.type == pygame.USEREVENT and hasattr(event, 'button') and event.button == settings_game_btn:
-                is_audio_btn_clicked, is_music_playing = settings_menu(is_audio_btn_clicked, is_music_playing)
+                settings_menu(main_background, -525)
 
             if event.type == pygame.USEREVENT and hasattr(event, 'button') and event.button == exit_game_btn:
                 running = False
@@ -151,5 +149,3 @@ def game_screen(game):
             btn.draw_btn(screen)
 
         pygame.display.flip()
-
-

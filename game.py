@@ -10,16 +10,14 @@ from pytmx.util_pygame import load_pygame
 from tile import Tiles
 import os
 from button import CreateButton
-
+from menus.settings_menu import settings_menu
 
 FPS = 60
 
 is_paused = False
 
-
 TEMP_WIDTH = 800
 TEMP_HEIGHT = 800
-
 
 tmx_data = load_pygame('data/game/map/basic.tmx')
 
@@ -28,7 +26,6 @@ HEIGHT = tmx_data.height * tmx_data.tileheight
 
 background_image = pygame.image.load(os.path.join('data/', 'game/', 'images/', 'total_bg.png'))
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
-
 
 screen = pygame.display.set_mode((TEMP_WIDTH, TEMP_HEIGHT))
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -42,9 +39,6 @@ clock = pygame.time.Clock()
 pause_button = CreateButton(0, 10, 100, 75, "Стоп", 'BUTTON_ON.png', 'BUTTON_ON_HOVERED.gif',
                             'button_sound_click.mp3')
 
-
-
-
 for layer in tmx_data.layers:
     if hasattr(layer, 'tiles'):
         for x, y, surf in layer.tiles():
@@ -57,7 +51,6 @@ for layer in tmx_data.layers:
             platform_rects.append(platform_rect)
 
 damage_sound = pygame.mixer.Sound(os.path.join('data/', 'player/', 'sounds/', 'damage_sound.wav'))
-
 
 
 def blur_surface(surface, radius=5):
@@ -85,7 +78,6 @@ class Game:
         self._health_bar = HealthBar()
         self._rocks = pygame.sprite.Group()
 
-
     def init_new_game(self):
         self._timer = Timer()
         self._player = Player()
@@ -105,13 +97,17 @@ class Game:
         resume_button = CreateButton(WIDTH / 2 - (252 / 2), 350, 252, 74, "Вернуться", 'BUTTON_ON.png',
                                      'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
-        menu_button = CreateButton(WIDTH / 2 - (252 / 2), 450, 252, 74, "Выйти в меню", 'BUTTON_ON.png',
+        settings_button = CreateButton(WIDTH / 2 - (252 / 2), 450, 252, 74, "Настройки", 'BUTTON_ON.png',
+                                       'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
+        menu_button = CreateButton(WIDTH / 2 - (252 / 2), 550, 252, 74, "Выйти в меню", 'BUTTON_ON.png',
                                    'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
         while is_paused:
             screen.blit(blurred_bg, (0, 0))
             screen.blit(text_surface, text_rect)
             resume_button.draw_btn(screen)
+            settings_button.draw_btn(screen)
             menu_button.draw_btn(screen)
 
             mouse_pos = pygame.mouse.get_pos()
@@ -122,21 +118,23 @@ class Game:
                     quit()
 
                 resume_button.processing_event(event)
+                settings_button.processing_event(event)
                 menu_button.processing_event(event)
 
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if resume_button.rect.collidepoint(event.pos):
                         is_paused = False
                         self._timer.resume()
+                    elif settings_button.rect.collidepoint(event.pos):
+                        settings_menu(blurred_bg, 0)
                     elif menu_button.rect.collidepoint(event.pos):
                         is_paused = False
                         main_menu(self)
-                        return  # Важно! Прерываем выполнение, чтобы не продолжалась игра.
+                        return
 
             resume_button.check_hover(mouse_pos)
+            settings_button.check_hover(mouse_pos)
             menu_button.check_hover(mouse_pos)
-            resume_button.draw_btn(screen)
-            menu_button.draw_btn(screen)
 
             pygame.display.update()
             clock.tick(FPS)

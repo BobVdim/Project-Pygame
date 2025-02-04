@@ -100,4 +100,4 @@ TIMER_SPAWN = {
 DIFFICULTY_MOD = None
 
 # -----Game Music Setting---------------------
-is_music_playing = False
+IS_AUDIO_ON = True
