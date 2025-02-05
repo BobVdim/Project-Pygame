@@ -15,6 +15,7 @@ from button import CreateButton
 from menus.settings_menu import settings_menu
 from sounds.background import play_background_music
 from heart import Heart
+from score_manager import save_best_time
 
 FPS = 60
 
@@ -283,28 +284,13 @@ class Game:
 
                             if self._health_bar.current_health == 0:
                                 best_time = self._timer.get_time()
-                                self.save_best_time(best_time)
+                                save_best_time(config.DIFFICULTY_MOD, best_time)
                                 self.game_over_screen(best_time)
                                 return
             elif isinstance(rock, Heart):
                 if self._player.rect.colliderect(rock.rect):
                     rock.collect(self._player, self._health_bar)
                     self._rocks.remove(rock)
-
-    def save_best_time(self, new_time):
-        filename = "score.csv"
-        best_time = new_time
-
-        if os.path.exists(filename):
-            with open(filename, "r", newline="") as file:
-                reader = csv.reader(file)
-                times = list(reader)
-                if times:
-                    best_time = max(best_time, float(times[0][0]))
-
-        with open(filename, "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow([best_time])
 
     def create_items(self, group):
         is_big_rock = random.random() < 0.1
@@ -335,5 +321,3 @@ class Game:
 
             heart_speed = random.randint(3, 6)
             Heart(x, heart_speed, heart_image, self._rocks)
-
-
