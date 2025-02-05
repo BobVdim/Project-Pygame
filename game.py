@@ -13,6 +13,7 @@ import os
 from button import CreateButton
 from menus.settings_menu import settings_menu
 from sounds.background import play_background_music
+from heart import Heart
 
 FPS = 60
 
@@ -161,7 +162,7 @@ class Game:
                         self.pause_game()
 
                 elif event.type == pygame.USEREVENT:
-                    self.createRocks(self._rocks)
+                    self.create_items(self._rocks)
 
             if not is_paused:
                 self._timer.update_spawn_interval()
@@ -194,6 +195,10 @@ class Game:
             self.check_game_over()
             self._health_bar.draw(screen)
             self._timer.draw(screen)
+
+            for heart in self._rocks:
+                if isinstance(heart, Heart):
+                    heart.collect(self._player, self._health_bar)
 
             if not is_paused:
                 pause_button.check_hover(mouse_pos)
@@ -261,24 +266,29 @@ class Game:
 
     def check_game_over(self):
         for rock in self._rocks:
-            if self._player.rect.colliderect(rock.rect):
-                if not self._player.is_invincible:
-                    if rock.rect.bottom > self._player.rect.top and rock.rect.bottom <= self._player.rect.top + 10:
-                        if rock.is_big_rock:
-                            self._health_bar.reduce_health()
-                            self._health_bar.reduce_health()
-                        else:
-                            self._health_bar.reduce_health()
+            if isinstance(rock, Rock):
+                if self._player.rect.colliderect(rock.rect):
+                    if not self._player.is_invincible:
+                        if rock.rect.bottom > self._player.rect.top and rock.rect.bottom <= self._player.rect.top + 10:
+                            if rock.is_big_rock:
+                                self._health_bar.reduce_health()
+                                self._health_bar.reduce_health()
+                            else:
+                                self._health_bar.reduce_health()
 
-                        self._rocks.remove(rock)
-                        damage_sound.play()
-                        self._player.take_damage()
+                            self._rocks.remove(rock)
+                            damage_sound.play()
+                            self._player.take_damage()
 
-                        if self._health_bar.current_health == 0:
-                            best_time = self._timer.get_time()
-                            self.save_best_time(best_time)
-                            self.game_over_screen(best_time)
-                            return
+                            if self._health_bar.current_health == 0:
+                                best_time = self._timer.get_time()
+                                self.save_best_time(best_time)
+                                self.game_over_screen(best_time)
+                                return
+            elif isinstance(rock, Heart):
+                if self._player.rect.colliderect(rock.rect):
+                    rock.collect(self._player, self._health_bar)
+                    self._rocks.remove(rock)
 
     def save_best_time(self, new_time):
         filename = "score.csv"
@@ -295,22 +305,34 @@ class Game:
             writer = csv.writer(file)
             writer.writerow([best_time])
 
-    def createRocks(self, group):
+    def create_items(self, group):
         is_big_rock = random.random() < 0.1
-
         if is_big_rock:
-            image = random.choice(big_rocks_images)
+            imagge = random.choice(big_rocks_images)
             scale_factor = 5
             speed = random.randint(3, 6)
         else:
-            image = random.choice(rocks_images)
+            imagge = random.choice(rocks_images)
             scale_factor = random.uniform(1, 1.5)
             speed = random.randint(3, 6)
 
-        original_image = pygame.image.load(image).convert_alpha()
+        original_image = pygame.image.load(imagge).convert_alpha()
         new_width = int(original_image.get_width() * scale_factor)
         new_height = int(original_image.get_height() * scale_factor)
-        image = pygame.transform.scale(original_image, (new_width, new_height))
+        imagge = pygame.transform.scale(original_image, (new_width, new_height))
 
         x = random.randint(130, WIDTH - 130)
-        Rock(x, speed, image, group, is_big_rock)
+        Rock(x, speed, imagge, group, is_big_rock)
+
+        if self._health_bar.current_health < 3 and random.random() < 0.05:
+            heart_image = pygame.image.load('data/player/player_images/health/седрце_полное.png').convert_alpha()
+
+            heart_scale_factor = 3
+            new_heart_width = int(heart_image.get_width() * heart_scale_factor)
+            new_heart_height = int(heart_image.get_height() * heart_scale_factor)
+            heart_image = pygame.transform.scale(heart_image, (new_heart_width, new_heart_height))
+
+            heart_speed = random.randint(3, 6)
+            Heart(x, heart_speed, heart_image, self._rocks)
+
+

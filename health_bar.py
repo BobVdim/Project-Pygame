@@ -5,7 +5,6 @@ import config
 
 class HealthBar:
     def __init__(self):
-
         self.max_health = config.HEALTH_MAX_HEALTH
         self.current_health = config.HEALTH_MAX_HEALTH
 
@@ -59,5 +58,6 @@ class HealthBar:
         if self.current_health > 0:
             self.current_health -= 1
 
-    def reset_health(self):
-        self.current_health = self.max_health
+    def add_health(self, amount=1):
+        if self.current_health < self.max_health:
+            self.current_health += amount
