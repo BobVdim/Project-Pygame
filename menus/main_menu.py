@@ -103,12 +103,15 @@ def launch_game(game):
 
 
 def game_screen(game):
-    easy_mod_btn = CreateButton(274, 300, 252, 74, "Легкий", 'BUTTON_ON.png',
+    easy_mod_btn = CreateButton(274, 200, 252, 74, "Легкий", 'BUTTON_ON.png',
                                 'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
-    mid_mod_btn = CreateButton(274, 400, 252, 74, "Средний", 'BUTTON_ON.png',
+    mid_mod_btn = CreateButton(274, 300, 252, 74, "Средний", 'BUTTON_ON.png',
                                'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
-    hard_mod_btn = CreateButton(274, 500, 252, 74, "Сложный", 'BUTTON_ON.png',
+    hard_mod_btn = CreateButton(274, 400, 252, 74, "Сложный", 'BUTTON_ON.png',
                                 'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+    mega_hard_mod_btn = CreateButton(274, 500, 252, 74, "Хардкор", 'BUTTON_ON.png',
+                                     'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
     back_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 650, 252, 74, "Назад", 'BUTTON_ON.png',
                             'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
@@ -129,7 +132,7 @@ def game_screen(game):
                 running = False
                 pygame.quit()
 
-            for btn in [easy_mod_btn, mid_mod_btn, hard_mod_btn, back_btn]:
+            for btn in [easy_mod_btn, mid_mod_btn, hard_mod_btn, mega_hard_mod_btn, back_btn]:
                 btn.processing_event(event)
 
             if event.type == pygame.USEREVENT and hasattr(event, 'button'):
@@ -148,10 +151,15 @@ def game_screen(game):
                     show_intro_screen()
                     launch_game(game)
                     return
+                elif event.button == mega_hard_mod_btn:
+                    config.DIFFICULTY_MOD = 'mega_hard'
+                    show_intro_screen()
+                    launch_game(game)
+                    return
                 elif event.button == back_btn:
                     return
 
-        for btn in [easy_mod_btn, mid_mod_btn, hard_mod_btn, back_btn]:
+        for btn in [easy_mod_btn, mid_mod_btn, hard_mod_btn, mega_hard_mod_btn, back_btn]:
             btn.check_hover(mouse_pos)
             btn.draw_btn(screen)
 

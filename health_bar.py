@@ -5,8 +5,13 @@ import config
 
 class HealthBar:
     def __init__(self):
-        self.max_health = config.HEALTH_MAX_HEALTH
-        self.current_health = config.HEALTH_MAX_HEALTH
+        if config.DIFFICULTY_MOD == 'mega_hard':
+            self.current_health = 1
+            self.max_health = 1
+
+        else:
+            self.current_health = config.HEALTH_MAX_HEALTH
+            self.max_health = config.HEALTH_MAX_HEALTH
 
         self.x = config.HEALTH_COORDS['x']
         self.y = config.HEALTH_COORDS['y']

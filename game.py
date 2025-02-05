@@ -2,6 +2,7 @@ import pygame
 import random
 import csv
 
+import config
 from rocks import Rock
 from player import Player
 from health_bar import HealthBar
@@ -324,7 +325,7 @@ class Game:
         x = random.randint(130, WIDTH - 130)
         Rock(x, speed, imagge, group, is_big_rock)
 
-        if self._health_bar.current_health < 3 and random.random() < 0.05:
+        if self._health_bar.current_health < 3 and random.random() < 0.05 and config.DIFFICULTY_MOD != 'mega_hard':
             heart_image = pygame.image.load('data/player/player_images/health/седрце_полное.png').convert_alpha()
 
             heart_scale_factor = 3

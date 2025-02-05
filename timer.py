@@ -12,7 +12,7 @@ class Timer:
             self.spawn_interval = 1000
         elif config.DIFFICULTY_MOD == 'medium':
             self.spawn_interval = 700
-        elif config.DIFFICULTY_MOD == 'hard':
+        elif config.DIFFICULTY_MOD == 'hard' or config.DIFFICULTY_MOD == 'mega_hard':
             self.spawn_interval = 400
         else:
             self.spawn_interval = 1000
