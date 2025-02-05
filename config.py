@@ -1,4 +1,12 @@
 import os
+import pygame
+
+pygame.init()
+
+# -----Screen Config---------------------
+info = pygame.display.Info()
+SCREEN_WIDTH = info.current_w
+SCREEN_HEIGHT = info.current_h
 
 # -----Player Config---------------------
 

@@ -1,5 +1,6 @@
 from button import load_image
 import pygame
+import config
 
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800

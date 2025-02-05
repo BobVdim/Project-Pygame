@@ -9,6 +9,7 @@ from sounds.background import play_background_music
 def settings_menu(bg, sdvig):
     is_audio_btn_clicked = not config.IS_AUDIO_ON
     is_music_playing = config.IS_AUDIO_ON
+    music_path = os.path.join('data', 'menu', 'sounds', 'background', 'background_music.mp3')
 
     audio_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 350, 252, 74, "Звук",
                                   'BUTTON_ON.png', 'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
@@ -52,7 +53,7 @@ def settings_menu(bg, sdvig):
                     else:
                         audio_game_btn.image = load_image('buttons/BUTTON_ON.png')
                         audio_game_btn.hover_image = load_image('buttons/BUTTON_ON_HOVERED.gif')
-                        play_background_music()
+                        play_background_music(music_path)
 
                     audio_game_btn.image = pygame.transform.scale(audio_game_btn.image,
                                                                   (audio_game_btn.width, audio_game_btn.height))

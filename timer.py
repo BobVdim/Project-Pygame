@@ -47,8 +47,10 @@ class Timer:
         current_time = pygame.time.get_ticks()
         if current_time - self.last_spawn_time >= self.spawn_update_interval:
             if self.spawn_interval > self.mid_spawn_interval:
+                print(self.spawn_interval)
                 self.spawn_interval -= self.large_decrease_step
             elif self.spawn_interval > self.min_spawn_interval:
+                print(self.spawn_interval)
                 self.spawn_interval -= self.small_decrease_step
             self.spawn_interval = max(self.spawn_interval, self.min_spawn_interval)
 

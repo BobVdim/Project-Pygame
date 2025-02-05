@@ -12,6 +12,7 @@ from tile import Tiles
 import os
 from button import CreateButton
 from menus.settings_menu import settings_menu
+from sounds.background import play_background_music
 
 FPS = 60
 
@@ -95,7 +96,7 @@ class Game:
         text_surface = font.render("Тайм-аут", True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, 100))
 
-        resume_button = CreateButton(WIDTH / 2 - (252 / 2), 550, 252, 74, "Вернуться", 'BUTTON_ON.png',
+        resume_button = CreateButton(WIDTH / 2 - (252 / 2), 650, 252, 74, "Вернуться", 'BUTTON_ON.png',
                                      'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
 
         settings_button = CreateButton(WIDTH / 2 - (252 / 2), 450, 252, 74, "Настройки", 'BUTTON_ON.png',
@@ -143,6 +144,9 @@ class Game:
     def run_game(self):
         global is_paused
         running = True
+        pygame.mixer.init()
+
+        play_background_music("data/game/background_sound/game_bg_music.mp3")
 
         while running:
             mouse_pos = pygame.mouse.get_pos()
@@ -198,6 +202,63 @@ class Game:
             pygame.display.update()
             clock.tick(FPS)
 
+    def game_over_screen(self, survival_time):
+        font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 72)
+        text_surface = font.render("Игра завершена", True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, 100))
+
+        font_small = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 48)
+        time_surface = font_small.render(f"Ваше время: {survival_time:.2f} сек", True, (255, 255, 255))
+        time_rect = time_surface.get_rect(center=(WIDTH // 2, 200))
+
+        menu_button = CreateButton(WIDTH / 2 - 126, 350, 252, 74, "Выйти в меню", 'BUTTON_ON.png',
+                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
+        restart_button = CreateButton(WIDTH / 2 - 126, 450, 252, 74, "Начать заново", 'BUTTON_ON.png',
+                                      'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
+        exit_button = CreateButton(WIDTH / 2 - 126, 650, 252, 74, "Выйти", 'BUTTON_ON.png',
+                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
+
+        while True:
+            screen.blit(background_image, (0, 0))
+            screen.blit(text_surface, text_rect)
+            screen.blit(time_surface, time_rect)
+
+            menu_button.draw_btn(screen)
+            restart_button.draw_btn(screen)
+            exit_button.draw_btn(screen)
+
+            mouse_pos = pygame.mouse.get_pos()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+                menu_button.processing_event(event)
+                restart_button.processing_event(event)
+                exit_button.processing_event(event)
+
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if menu_button.rect.collidepoint(event.pos):
+                        main_menu(self)
+                        return
+                    elif restart_button.rect.collidepoint(event.pos):
+                        self.init_new_game()
+                        self.run_game()
+                        return
+                    elif exit_button.rect.collidepoint(event.pos):
+                        pygame.quit()
+                        quit()
+
+            menu_button.check_hover(mouse_pos)
+            restart_button.check_hover(mouse_pos)
+            exit_button.check_hover(mouse_pos)
+
+            pygame.display.update()
+            clock.tick(FPS)
+
     def check_game_over(self):
         for rock in self._rocks:
             if self._player.rect.colliderect(rock.rect):
@@ -216,9 +277,8 @@ class Game:
                         if self._health_bar.current_health == 0:
                             best_time = self._timer.get_time()
                             self.save_best_time(best_time)
-                            print("Game Over")
-                            pygame.quit()
-                            quit()
+                            self.game_over_screen(best_time)
+                            return
 
     def save_best_time(self, new_time):
         filename = "score.csv"

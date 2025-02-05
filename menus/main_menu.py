@@ -46,7 +46,8 @@ def show_intro_screen():
 
 
 def main_menu(game):
-    play_background_music()
+    music_path = os.path.join('data', 'menu', 'sounds', 'background', 'background_music.mp3')
+    play_background_music(music_path)
     start_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 300, 252, 74, "Новая игра", 'BUTTON_ON.png',
                                   'BUTTON_ON_HOVERED.gif', 'button_sound_click.mp3')
     settings_game_btn = CreateButton(SCREEN_WIDTH / 2 - (252 / 2), 400, 252, 74, "Настройки", 'BUTTON_ON.png',
