@@ -92,8 +92,10 @@ def main_menu(game):
             btn.check_hover(mouse_pos)
             btn.draw_btn(screen)
 
-        pygame.display.flip()
-
+        try:
+            pygame.display.flip()
+        except:
+            return
     pygame.quit()
 
 

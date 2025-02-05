@@ -5,6 +5,8 @@ import config
 
 class HealthBar:
     def __init__(self):
+        pygame.font.init()
+
         if config.DIFFICULTY_MOD == 'mega_hard':
             self.current_health = 1
             self.max_health = 1
@@ -43,7 +45,10 @@ class HealthBar:
 
     def draw(self, surface):
         text = f"{self.current_health}/{self.max_health}"
-        text_surface = self.font.render(text, True, self.text_color)
+        try:
+            text_surface = self.font.render(text, True, self.text_color)
+        except:
+            return
 
         text_x = self.x + self.text_offset[0]
         text_y = self.y + self.text_offset[1]

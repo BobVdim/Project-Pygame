@@ -43,8 +43,10 @@ class CreateButton:
 
     def draw_btn(self, screen):
         current_image = self.hover_image if self.is_hovered else self.image
-        screen.blit(current_image, self.rect.topleft)
-
+        try:
+            screen.blit(current_image, self.rect.topleft)
+        except:
+            return
         font = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 30)
         text_surface = font.render(self.text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(self.rect.centerx, self.rect.centery - 10))

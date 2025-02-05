@@ -206,7 +206,10 @@ class Game:
                 pause_button.check_hover(mouse_pos)
                 pause_button.draw_btn(screen)
 
-            pygame.display.update()
+            try:
+                pygame.display.update()
+            except:
+                return
             clock.tick(FPS)
 
     def game_over_screen(self, survival_time):
