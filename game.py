@@ -59,8 +59,10 @@ damage_sound = pygame.mixer.Sound(os.path.join('data/', 'player/', 'sounds/', 'd
 
 
 def blur_surface(surface, radius=5):
-    surface = pygame.transform.gaussian_blur(surface, radius)
-    return surface
+    scaled_surface = pygame.transform.smoothscale(surface,
+                                                  (surface.get_width() // radius, surface.get_height() // radius))
+    scaled_surface = pygame.transform.smoothscale(scaled_surface, (surface.get_width(), surface.get_height()))
+    return scaled_surface
 
 
 rocks_images = ['data/rocks/rock2.png', 'data/rocks/rock3.png']
