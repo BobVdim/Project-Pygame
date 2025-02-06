@@ -169,8 +169,11 @@ class Game:
             if not is_paused:
                 self._timer.update_spawn_interval()
 
-            keys = pygame.key.get_pressed()
-            is_walking = False
+            try:
+                keys = pygame.key.get_pressed()
+                is_walking = False
+            except:
+                return
 
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 if self._player.rect.x > 130:
@@ -218,7 +221,14 @@ class Game:
         text_rect = text_surface.get_rect(center=(WIDTH // 2, 100))
 
         font_small = pygame.font.Font(os.path.join('data', 'menu', 'fonts', 'pixel_font.ttf'), 48)
-        time_surface = font_small.render(f"Ваше время: {survival_time:.2f} сек", True, (255, 255, 255))
+
+        total_seconds = int(survival_time)
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
+
+        time_text = f"Ваше время: {minutes:02}:{seconds:02}"
+
+        time_surface = font_small.render(time_text, True, (255, 255, 255))
         time_rect = time_surface.get_rect(center=(WIDTH // 2, 200))
 
         menu_button = CreateButton(WIDTH / 2 - 126, 350, 252, 74, "Выйти в меню", 'BUTTON_ON.png',

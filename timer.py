@@ -39,7 +39,12 @@ class Timer:
             font = pygame.font.Font('data/menu/fonts/pixel_font.ttf', 36)
         except:
             return
-        time_text = f"Time: {int(self.get_time())}s"
+
+        total_seconds = int(self.get_time())
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
+        time_text = f"Time: {minutes:02}:{seconds:02}"
+
         text_surface = font.render(time_text, True, (255, 255, 255))
         screen.blit(text_surface, (800 // 2 - text_surface.get_width() // 2, 20))
 
