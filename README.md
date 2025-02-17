@@ -65,8 +65,13 @@
         + #### установить зависимости:
               pip install -r requirements.txt
         + #### запустить игру:
-              python start_game.py  
-  
+              python start_game.py
+          
+# :heavy_check_mark: Известные проблемы
+
+ + :grey_exclamation: Иногда может не быть звука, если запускать игру через сборку из исходного кода
+ + :grey_exclamation: Если запускать игру через exe файл, антивирус может посчитать эту игру с вирусом (так как она из неизвестного источника), просто проигнорируйте это
+   
 # :man_technologist: Разработчик
 
 - [BobVdim](https://github.com/BobVdim)
