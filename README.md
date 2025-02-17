@@ -1,5 +1,5 @@
 <p align="center">
-      <img src="https://i.ibb.co/sdYYvXgW/PYTHON.png" width="726">
+      <img src="https://i.ibb.co/kgcRqdYB/Screenshot-2025-02-17-182232-2025-02-17.png">
 </p>
 
 <p align="center">
